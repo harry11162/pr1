@@ -62,6 +62,6 @@ if __name__ == '__main__':
   print(neg_mean.tolist())
   print(pos_cov.tolist())
   print(neg_cov.tolist())
-  contour = contours[0]
+  contour = contours[29]
   print(contour.shape)
   print(contour.reshape(-1).tolist())
