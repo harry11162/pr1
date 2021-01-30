@@ -3,3 +3,4 @@ data/*
 *.pyc
 mask/
 mask/*
+.DS_Store
