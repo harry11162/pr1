@@ -40,7 +40,7 @@ class BinDetector():
 		self.known_contour = self.known_contour.reshape(-1, 1, 2)
 		self.thr = 0.5
 		self.area_lower_thr = 0.1
-		self.area_higher_thr = 0.35
+		self.area_higher_thr = 0.4
 		self.known_contour = cv2.convexHull(self.known_contour)
 
 	def segment_image(self, img):
