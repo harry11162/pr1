@@ -42,7 +42,7 @@ def compare_boxes(true_boxes, estm_boxes):
 
 
 if __name__ == '__main__':
-  folder = "data/validation"
+  folder = "bin_detection/data/validation"
   my_detector = BinDetector()
   for filename in os.listdir(folder):
     if filename.endswith(".jpg"):
