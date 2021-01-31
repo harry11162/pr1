@@ -54,7 +54,7 @@ if __name__ == '__main__':
         true_boxes = yaml.safe_load(stream)
 
       # convert from BGR (opencv convention) to RGB (everyone's convention(LOL))
-      img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+      # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
       # segment the image
       mask_img = my_detector.segment_image(img)
@@ -62,7 +62,7 @@ if __name__ == '__main__':
       # detect recycling bins
       estm_boxes = my_detector.get_bounding_boxes(mask_img)
 
-      img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+      # img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
       for box in estm_boxes:
         cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0,255,0), 2)
 

@@ -41,6 +41,7 @@ class BinDetector():
 			Outputs:
 				mask_img - a binary image with 1 if the pixel in the original image is red and 0 otherwise
 		'''
+		img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 		h, w, _ = img.shape
 		# YOUR CODE HERE
 		# pos = ((img - self.pos_mean[np.newaxis, np.newaxis, :]) ** 2) / self.pos_var[np.newaxis, np.newaxis, :]
@@ -89,21 +90,62 @@ class BinDetector():
 		img = np.stack([img] * 3, axis=2)
 
 		boxes = []
-		contours_to_draw = []
 		for i in contours:
+
+			# epsilon = 0.01 * cv2.arcLength(i,True)
+			# i = cv2.approxPolyDP(i,epsilon,True)
+
 			distance = cv2.matchShapes(i, self.known_contour, 1, 0.)
 			area = cv2.contourArea(i)
 			if distance < self.thr and area > h*self.area_thr * w*self.area_thr:
 				mat = np.zeros((h, w, 3))
 				cv2.fillPoly(mat, pts=[i.reshape(-1, 2)], color=(255,255,255))
 
+				# cv2.imshow('approx', mat)
+				# cv2.waitKey(0)
+				# cv2.destroyAllWindows()
+
 				mat = mat[:, :, 0] > 0
-				mat = label(mat, 8)
+				mat = label(mat)
 				props = regionprops(mat)
 
+				assert len(props) == 1
 				bbox = props[0].bbox
-				boxes.append([bbox[1], bbox[0], bbox[3], bbox[2]])
+
+				max_iou = 0.
+				for b in boxes:
+					max_iou = max(max_iou, self.get_iou(b, (bbox[1], bbox[0], bbox[3], bbox[2])))
+				if max_iou < 0.5:
+					boxes.append([bbox[1], bbox[0], bbox[3], bbox[2]])
 
 		return boxes
 
 
+
+	def get_iou(self, bb1, bb2):
+		bb1 = {'x1': bb1[0], 'y1': bb1[1], 'x2': bb1[2], 'y2': bb1[3]}
+		bb2 = {'x1': bb2[0], 'y1': bb2[1], 'x2': bb2[2], 'y2': bb2[3]}
+		# determine the coordinates of the intersection rectangle
+		x_left = max(bb1['x1'], bb2['x1'])
+		y_top = max(bb1['y1'], bb2['y1'])
+		x_right = min(bb1['x2'], bb2['x2'])
+		y_bottom = min(bb1['y2'], bb2['y2'])
+
+		if x_right < x_left or y_bottom < y_top:
+			return 0.0
+
+		# The intersection of two axis-aligned bounding boxes is always an
+		# axis-aligned bounding box
+		intersection_area = (x_right - x_left) * (y_bottom - y_top)
+
+		# compute the area of both AABBs
+		bb1_area = (bb1['x2'] - bb1['x1']) * (bb1['y2'] - bb1['y1'])
+		bb2_area = (bb2['x2'] - bb2['x1']) * (bb2['y2'] - bb2['y1'])
+
+		# compute the intersection over union by taking the intersection
+		# area and dividing it by the sum of prediction + ground-truth
+		# areas - the interesection area
+		iou = intersection_area / float(bb1_area + bb2_area - intersection_area)
+		assert iou >= 0.0
+		assert iou <= 1.0
+		return iou
