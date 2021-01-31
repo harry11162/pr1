@@ -26,13 +26,9 @@ if __name__ == '__main__':
 
     img = cv2.imread(os.path.join(image_folder, '00{:02d}.jpg'.format(i)))
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    # we resize images to the same size
+    # so that each image has equal weight effected on the trained parameters
     img = cv2.resize(img, (512, 512))
-    # img = img.astype(np.float64)/255
-
-    # balance the image with mean brightness
-    # brightness = img * np.array([0.2126, 0.7152, 0.0722])[np.newaxis, np.newaxis, :]
-    # brightness = brightness.sum(axis=2).mean()
-    # img = img / (brightness * 1e-2)
 
     h, w, c = img.shape
 
@@ -46,26 +42,22 @@ if __name__ == '__main__':
 
     img_to_show = img * mask[:, :, np.newaxis]
     img_to_show = cv2.cvtColor(img_to_show, cv2.COLOR_RGB2BGR)
+
+    # visualize to check whether the data is fine
     cv2.imshow('img', img_to_show)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-    if i <= 50:
-      contour, hierarchy = cv2.findContours(mask.astype(np.uint8), mode=cv2.RETR_CCOMP, method=cv2.CHAIN_APPROX_TC89_L1)
-      if i == 44:
-        contour = [contour[-1]]
-      assert len(contour) == 1
-      contours = contours + contour
-    
     pos_data = np.concatenate((pos_data, img[mask]), axis=0)
     neg_data = np.concatenate((neg_data, img[~mask]), axis=0)
 
   n_pos = pos_data.shape[0]
   n_neg = neg_data.shape[0]
-  theta = (n_pos / (n_pos + n_neg), n_neg / (n_pos + n_neg))
-  pos_mean = pos_data.mean(axis=0)
+  # compute parameters
+  theta = (n_pos / (n_pos + n_neg), n_neg / (n_pos + n_neg))  # prior probability
+  pos_mean = pos_data.mean(axis=0)  # mean
   neg_mean = neg_data.mean(axis=0)
-  pos_cov = np.cov(pos_data.T)
+  pos_cov = np.cov(pos_data.T)  # covariance matrix
   neg_cov = np.cov(neg_data.T)
 
   print(theta)
@@ -73,6 +65,4 @@ if __name__ == '__main__':
   print(neg_mean.tolist())
   print(pos_cov.tolist())
   print(neg_cov.tolist())
-  contour = contours[29]
-  print(contour.shape)
-  print(contour.reshape(-1).tolist())
+  # then paste these printed data into bin_detector.py

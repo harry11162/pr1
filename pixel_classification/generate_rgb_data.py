@@ -52,10 +52,16 @@ if __name__ == '__main__':
   binary_label = np.equal(y[np.newaxis, :], labels[:, np.newaxis])  # (3, N)
   cnt = binary_label.sum(axis=1)  # (3,)
 
+
+  # compute parameters
+
+  # prior probability
   theta = cnt / cnt.sum()
 
+  # mean
   mu = np.matmul(binary_label, X) / cnt[:, np.newaxis]  # (3, 3)
 
+  # variance
   sigma2 = X[np.newaxis, :, :] - mu[:, np.newaxis, :]
   sigma2 = (sigma2 * binary_label[:, :, np.newaxis]) ** 2
   sigma2 = sigma2.sum(axis=1) / cnt[:, np.newaxis]
@@ -63,4 +69,4 @@ if __name__ == '__main__':
   print(theta)
   print(mu)
   print(sigma2)
-
+  # then paste these printed parameters into pixel_classifier.py

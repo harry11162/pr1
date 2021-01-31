@@ -11,7 +11,7 @@ from pixel_classifier import PixelClassifier
 if __name__ == '__main__':
   # test the classifier
   
-  folder = 'data/validation/green'
+  folder = 'pixel_classification/data/validation/green'
   
   X = read_pixels(folder)
   myPixelClassifier = PixelClassifier()

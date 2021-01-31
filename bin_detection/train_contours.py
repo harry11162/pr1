@@ -24,20 +24,21 @@ if __name__ == '__main__':
 
     img = cv2.imread(os.path.join(image_folder, '00{:02d}.jpg'.format(i)))
     h, w, _ = img.shape
-    # balance the image with mean brightness
-    # brightness = img * np.array([0.2126, 0.7152, 0.0722])[np.newaxis, np.newaxis, :]
-    # brightness = brightness.sum(axis=2).mean()
-    # img = img / (brightness * 1e-2)
 
     with open(os.path.join(mask_folder, "mask_00{:02d}.pkl".format(i)), "rb") as f:
       mask = pickle.load(f)
+    
+    # we only use the object area of the image
+    # the rest if filled with 0 (black background)
     img = img * mask[:, :, np.newaxis]
 
     detector = BinDetector()
-    mask = detector.segment_image(img)
+    mask = detector.segment_image(img)  # use the same segmentation model to segment the image
 
+    # find the contours
     contours, hierarchy = cv2.findContours(mask, mode=cv2.RETR_FLOODFILL, method=cv2.CHAIN_APPROX_TC89_L1)
 
+    # get the largest contours
     max_contour_area = -1.
     sum_area = 0
     for c in contours:
@@ -47,8 +48,9 @@ if __name__ == '__main__':
         max_contour_area = area
         max_contour = c
     
+    # if even the largest contour is too small, simply discard this data
     if max_contour_area / sum_area > 0.4:
       contours_to_use.append(max_contour)
 
-with open("known_contours.pkl", "wb") as f:
+with open("bin_detection/known_contours.pkl", "wb") as f:
   pickle.dump(contours_to_use, f)

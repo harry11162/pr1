@@ -62,12 +62,13 @@ if __name__ == '__main__':
       # detect recycling bins
       estm_boxes = my_detector.get_bounding_boxes(mask_img)
 
-      # img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+      # check the prediction. predicted bbox are shown in green.
       for box in estm_boxes:
         cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (0,255,0), 2)
 
       cv2.imshow('prediction', img)
       cv2.waitKey(0)
+      # also check the segmentation map
       cv2.imshow('seg', mask_img.astype(np.uint8) * 255)
       cv2.waitKey(0)
       cv2.destroyAllWindows()

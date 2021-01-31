@@ -15,7 +15,8 @@ if __name__ == '__main__':
   folder = 'data/training'
   masks = []
 
-  for i in range(14, 15):
+  # there's no object in image 51-60
+  for i in range(1, 51):
 
     filename = '00{:02d}.jpg'.format(i)
     img = cv2.imread(os.path.join(folder,filename))
@@ -29,6 +30,6 @@ if __name__ == '__main__':
     # get the image mask
     mask = my_roi.get_mask(img)
     
-    with open("mask_00{:02d}.pkl".format(i), "wb") as f:
+    with open("bin_detection/mask/mask_00{:02d}.pkl".format(i), "wb") as f:
       pickle.dump(mask, f)
 
