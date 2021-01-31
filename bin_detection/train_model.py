@@ -44,6 +44,12 @@ if __name__ == '__main__':
 
     mask = transform.resize(mask, (512, 512)) > 0.5
 
+    img_to_show = img * mask[:, :, np.newaxis]
+    img_to_show = cv2.cvtColor(img_to_show, cv2.COLOR_RGB2BGR)
+    cv2.imshow('img', img_to_show)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
     if i <= 50:
       contour, hierarchy = cv2.findContours(mask.astype(np.uint8), mode=cv2.RETR_CCOMP, method=cv2.CHAIN_APPROX_TC89_L1)
       if i == 44:
