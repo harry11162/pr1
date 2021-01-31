@@ -68,8 +68,8 @@ if __name__ == '__main__':
 
       cv2.imshow('prediction', img)
       cv2.waitKey(0)
-      # cv2.imshow('seg', mask_img.astype(np.uint8) * 255)
-      # cv2.waitKey(0)
+      cv2.imshow('seg', mask_img.astype(np.uint8) * 255)
+      cv2.waitKey(0)
       cv2.destroyAllWindows()
       
       # The autograder checks your answers to the functions segment_image() and get_bounding_box()

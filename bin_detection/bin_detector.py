@@ -112,9 +112,9 @@ class BinDetector():
 				mat = np.zeros((h, w, 3))
 				cv2.fillPoly(mat, pts=[i.reshape(-1, 2)], color=(255,255,255))
 
-				cv2.imshow('approx', mat)
-				cv2.waitKey(0)
-				cv2.destroyAllWindows()
+				# cv2.imshow('approx', mat)
+				# cv2.waitKey(0)
+				# cv2.destroyAllWindows()
 
 				mat = mat[:, :, 0] > 0
 				mat = label(mat)
