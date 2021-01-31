@@ -29,6 +29,11 @@ if __name__ == '__main__':
     img = cv2.resize(img, (512, 512))
     # img = img.astype(np.float64)/255
 
+    # balance the image with mean brightness
+    # brightness = img * np.array([0.2126, 0.7152, 0.0722])[np.newaxis, np.newaxis, :]
+    # brightness = brightness.sum(axis=2).mean()
+    # img = img / (brightness * 1e-2)
+
     h, w, c = img.shape
 
     if i <= 50:
